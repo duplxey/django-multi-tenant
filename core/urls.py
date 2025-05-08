@@ -16,10 +16,31 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.http import JsonResponse
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
+from blog.views import ArticleViewSet
+from tasks.views import ProjectViewSet, TaskViewSet
+
+router = DefaultRouter()
+router.register("blog", ArticleViewSet)
+router.register("projects", ProjectViewSet)
+router.register("tasks", TaskViewSet)
+
+
+def index_view(request):
+    return JsonResponse(
+        {
+            "name": "django-multi-tenant",
+            "description": "A Django project with multi-tenancy support.",
+            "version": "1.0.0",
+        }
+    )
+
 
 urlpatterns = [
-    path("api/", include("blog.urls")),
-    path("api/", include("tasks.urls")),
+    path("", index_view, name="index"),
+    path("api/", include(router.urls)),
     path("admin/", admin.site.urls),
 ]
