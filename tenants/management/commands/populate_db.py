@@ -1,7 +1,6 @@
-from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 
-from tenants.models import Tenant, Domain
+from tenants.models import Tenant, Domain, User
 
 
 class Command(BaseCommand):

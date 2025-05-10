@@ -1,7 +1,8 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 from django_tenants.admin import TenantAdminMixin
 
-from tenants.models import Tenant, Domain
+from tenants.models import Tenant, Domain, User
 
 
 class TenantAdmin(TenantAdminMixin, admin.ModelAdmin):
@@ -14,3 +15,4 @@ class DomainAdmin(admin.ModelAdmin):
 
 admin.site.register(Tenant, TenantAdmin)
 admin.site.register(Domain, DomainAdmin)
+admin.site.register(User, UserAdmin)

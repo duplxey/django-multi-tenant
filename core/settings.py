@@ -101,9 +101,11 @@ DATABASE_ROUTERS = [
 # django-tenants
 # https://django-tenants.readthedocs.io/en/latest/index.html
 
+AUTH_USER_MODEL = "tenants.User"
 TENANT_MODEL = "tenants.Tenant"
 TENANT_DOMAIN_MODEL = "tenants.Domain"
 
+BASE_DOMAIN = "localhost"
 PUBLIC_SCHEMA_NAME = "public"
 
 # Password validation
