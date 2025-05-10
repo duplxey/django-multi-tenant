@@ -1,0 +1,16 @@
+from django.contrib import admin
+from django_tenants.admin import TenantAdminMixin
+
+from tenants.models import Tenant, Domain
+
+
+class TenantAdmin(TenantAdminMixin, admin.ModelAdmin):
+    list_display = ["schema_name", "name", "created_at", "updated_at"]
+
+
+class DomainAdmin(admin.ModelAdmin):
+    list_display = ["domain", "tenant", "is_primary", "created_at", "updated_at"]
+
+
+admin.site.register(Tenant, TenantAdmin)
+admin.site.register(Domain, DomainAdmin)

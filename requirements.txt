@@ -1,5 +1,6 @@
-Django==5.2.1
+Django==5.1.9
 psycopg2-binary==2.9.10
 djangorestframework==3.16.0
 django-filter==25.1
 Markdown==3.8
+django-tenants==3.7.0
