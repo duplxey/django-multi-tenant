@@ -1,6 +1,7 @@
 import json
 
-from django.core.management import BaseCommand
+from psycopg2 import connect, sql
+from django.core.management import BaseCommand, call_command
 from tenant_users.tenants.tasks import provision_tenant
 from tenant_users.tenants.utils import create_public_tenant
 
@@ -24,12 +25,51 @@ class Command(BaseCommand):
             self.tenants_data = json.load(file)
 
     def handle(self, *args, **kwargs):
+        self.drop_and_recreate_db()
+        call_command("migrate_schemas", "--shared", "--noinput")
+        self.stdout.write(
+            self.style.SUCCESS("Database recreated & migrated successfully.")
+        )
+
         self.create_public_tenant()
         self.create_private_tenants()
 
         self.stdout.write(
             self.style.SUCCESS("Yay, database has been populated successfully.")
         )
+
+    def drop_and_recreate_db(self):
+        db = settings.DATABASES["default"]
+        db_name = db["NAME"]
+
+        # Create a connection to the database
+        conn = connect(
+            dbname="postgres",
+            user=db["USER"],
+            password=db["PASSWORD"],
+            host=db["HOST"],
+            port=db["PORT"],
+        )
+        conn.autocommit = True
+        cur = conn.cursor()
+
+        # Terminate all connections to the database except the current one
+        cur.execute(
+            """
+            SELECT pg_terminate_backend(pid)
+            FROM pg_stat_activity
+            WHERE datname = %s
+              AND pid <> pg_backend_pid();
+            """,
+            [db_name],
+        )
+
+        # Drop the database if it exists and create a new one
+        cur.execute(sql.SQL("DROP DATABASE IF EXISTS {}").format(sql.Identifier(db_name)))
+        cur.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(db_name)))
+
+        cur.close()
+        conn.close()
 
     def create_public_tenant(self):
         self.stdout.write(f"Creating the public tenant...")

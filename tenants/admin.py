@@ -1,8 +1,7 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 from django_tenants.admin import TenantAdminMixin
 
-from tenants.models import Tenant, Domain, User
+from tenants.models import Domain, Tenant, User
 
 
 class TenantAdmin(TenantAdminMixin, admin.ModelAdmin):
