@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django.core.exceptions import ValidationError
 from django_tenants.admin import TenantAdminMixin
+from tenant_users.tenants.models import UserProfile
 
 from tenants.forms import UserAdminForm
 from tenants.models import Domain, Tenant, User
@@ -40,6 +42,18 @@ class UserAdmin(admin.ModelAdmin):
             },
         ),
     ]
+
+    def delete_model(self, request, obj):
+        # Cancel the delete if the user owns any tenant
+        if obj.id in Tenant.objects.values_list("owner_id", flat=True):
+            raise ValidationError("You cannot delete a user that is a tenant owner.")
+
+        # Cancel the delete if the user still belongs to any tenant
+        if obj.tenants.count() > 0:
+            raise ValidationError("You cannot delete a user that still belongs to a tenant.")
+
+        # Otherwise, delete the user
+        obj.delete(force_drop=True)
 
 
 admin.site.register(Tenant, TenantAdmin)
