@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django_tenants.admin import TenantAdminMixin
-from tenant_users.tenants.models import UserProfile
 
 from tenants.forms import UserAdminForm
 from tenants.models import Domain, Tenant, User
@@ -9,6 +8,9 @@ from tenants.models import Domain, Tenant, User
 
 class TenantAdmin(TenantAdminMixin, admin.ModelAdmin):
     list_display = ["schema_name", "name", "created_at", "updated_at"]
+
+    def delete_model(self, request, obj):
+        obj.delete(force_drop=True)
 
 
 class DomainAdmin(admin.ModelAdmin):
