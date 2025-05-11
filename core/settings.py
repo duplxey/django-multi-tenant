@@ -28,47 +28,30 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-SHARED_APPS = [
-    "django_tenants",  # must be first
+INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "tenant_users.permissions",
-    "tenant_users.tenants",
     "rest_framework",
     "django_filters",
-    "tenants.apps.TenantsConfig",
     "blog.apps.BlogConfig",
-]
-
-TENANT_APPS = [
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "tenant_users.permissions",
     "tasks.apps.TasksConfig",
 ]
 
-INSTALLED_APPS = list(SHARED_APPS) + [
-    app for app in TENANT_APPS if app not in SHARED_APPS
-]
-
 MIDDLEWARE = [
-    "django_tenants.middleware.main.TenantMainMiddleware",  # must be first
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "tenant_users.tenants.middleware.TenantAccessMiddleware",  # must be after 'AuthenticationMiddleware'
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
-PUBLIC_SCHEMA_URLCONF = "core.urls_public"
 
 TEMPLATES = [
     {
@@ -101,25 +84,6 @@ DATABASES = {
     }
 }
 
-DATABASE_ROUTERS = [
-    "django_tenants.routers.TenantSyncRouter",
-]
-
-# django-tenants
-# https://django-tenants.readthedocs.io/en/latest/index.html
-
-AUTH_USER_MODEL = "tenants.User"
-TENANT_MODEL = "tenants.Tenant"
-TENANT_DOMAIN_MODEL = "tenants.Domain"
-
-BASE_DOMAIN = "localhost"
-PUBLIC_SCHEMA_NAME = "public"
-
-# django-tenant-users
-# https://django-tenant-users.readthedocs.io/en/latest/index.html
-
-TENANT_USERS_DOMAIN = BASE_DOMAIN
-
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -136,10 +100,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
-]
-
-AUTHENTICATION_BACKENDS = [
-    "tenant_users.permissions.backend.UserBackend",
 ]
 
 # Internationalization
