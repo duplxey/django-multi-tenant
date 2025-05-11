@@ -10,6 +10,7 @@ class TenantAdmin(TenantAdminMixin, admin.ModelAdmin):
     list_display = ["schema_name", "name", "created_at", "updated_at"]
 
     def delete_model(self, request, obj):
+        # Force delete the tenant
         obj.delete(force_drop=True)
 
 
