@@ -1,55 +1,54 @@
+import json
+
 from django.core.management import BaseCommand
 
+from core import settings
 from tenants.models import Tenant, Domain, User
 
 
 class Command(BaseCommand):
     help = "Creates a public tenant and two demo tenants"
+    tenants_data_file = "tenants/data/tenants.json"
+
+    def __init__(self, stdout=None, stderr=None, no_color=False, force_color=False):
+        super().__init__(stdout, stderr, no_color, force_color)
+
+        # Load the tenant data from JSON
+        self.tenants_data = []
+        with open(self.tenants_data_file, "r") as file:
+            self.tenants_data = json.load(file)
 
     def handle(self, *args, **kwargs):
-        public_tenant = Tenant.objects.create(
-            schema_name="public",
-            name="Public Tenant",
-        )
-        public_tenant_domain = Domain.objects.create(
-            domain="localhost",
-            tenant=public_tenant,
-            is_primary=True,
-        )
-        public_tenant_superuser = User.objects.create_superuser(
-            username="admin@localhost",
-            email="admin@localhost",
-            password="password",
-        )
+        self.create_tenants()
+        self.stdout.write(self.style.SUCCESS(f"Successfully created the tenants!"))
 
-        demo1_tenant = Tenant.objects.create(
-            schema_name="demo1",
-            name="Demo Tenant 1",
-        )
-        demo1_tenant_domain = Domain.objects.create(
-            domain="demo1.localhost",
-            tenant=demo1_tenant,
-            is_primary=False,
-        )
-        demo1_tenant_superuser = User.objects.create_superuser(
-            username="admin@demo1.localhost",
-            email="admin@demo1.localhost",
-            password="password",
-        )
+    def create_tenants(self):
+        for tenant_data in self.tenants_data:
+            # Create the tenant
+            tenant = Tenant(
+                id=tenant_data["id"],
+                name=tenant_data["name"],
+                schema_name=tenant_data["schema_name"],
+            )
+            tenant.save()
 
-        demo2_tenant = Tenant.objects.create(
-            schema_name="demo2",
-            name="Demo Tenant 2",
-        )
-        demo2_tenant_domain = Domain.objects.create(
-            domain="demo2.localhost",
-            tenant=demo2_tenant,
-            is_primary=False,
-        )
-        demo2_tenant_superuser = User.objects.create_superuser(
-            username="admin@demo2.localhost",
-            email="admin@demo2.localhost",
-            password="password",
-        )
+            # Build the full domain name
+            domain_str = settings.BASE_DOMAIN
+            if tenant_data["subdomain"]:
+                domain_str = f"{tenant_data['subdomain']}.{settings.BASE_DOMAIN}"
 
-        self.stdout.write(self.style.SUCCESS(f"Successfully created tenan"))
+            # Create the domain
+            domain = Domain(
+                domain=domain_str,
+                is_primary=tenant_data["schema_name"] == settings.PUBLIC_SCHEMA_NAME,
+                tenant=tenant,
+            )
+            domain.save()
+
+            # Create the tenant owner
+            user = User.objects.create_superuser(
+                username=tenant_data["owner"]["username"],
+                email=tenant_data["owner"]["email"],
+                password=tenant_data["owner"]["password"],
+            )
+

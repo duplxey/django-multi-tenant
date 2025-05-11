@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "name": "Public Tenant",
+    "schema_name": "public",
+    "subdomain": "",
+    "owner": {
+      "username": "admin@localhost",
+      "email": "admin@localhost",
+      "password": "password"
+    }
+  },
+  {
+    "id": 2,
+    "name": "Demo1 Tenant",
+    "schema_name": "demo1",
+    "subdomain": "demo1",
+    "owner": {
+      "username": "admin@demo1.localhost",
+      "email": "admin@demo1.localhost",
+      "password": "password"
+    }
+  },
+  {
+    "id": 3,
+    "name": "Demo2 Tenant",
+    "schema_name": "demo2",
+    "subdomain": "demo2",
+    "owner": {
+      "username": "admin@demo2.localhost",
+      "email": "admin@demo2.localhost",
+      "password": "password"
+    }
+  }
+]
