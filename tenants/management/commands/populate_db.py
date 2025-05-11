@@ -51,4 +51,3 @@ class Command(BaseCommand):
                 email=tenant_data["owner"]["email"],
                 password=tenant_data["owner"]["password"],
             )
-

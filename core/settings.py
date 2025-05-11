@@ -62,6 +62,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "core.urls"
+PUBLIC_SCHEMA_URLCONF = "core.urls_public"
 
 TEMPLATES = [
     {
