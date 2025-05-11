@@ -107,6 +107,8 @@ class Command(BaseCommand):
                 email=tenant_data["owner"]["email"],
                 password=tenant_data["owner"]["password"],
             )
+            tenant_owner.is_verified = True
+            tenant_owner.save()
 
             # Create the tenant
             tenant, domain = provision_tenant(
