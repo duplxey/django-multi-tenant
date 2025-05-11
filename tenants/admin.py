@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django_tenants.admin import TenantAdminMixin
 
+from tenants.forms import UserAdminForm
 from tenants.models import Domain, Tenant, User
 
 
@@ -13,6 +14,7 @@ class DomainAdmin(admin.ModelAdmin):
 
 
 class UserAdmin(admin.ModelAdmin):
+    form = UserAdminForm
     list_display = ["id", "email", "is_active"]
     list_display_links = ["id", "email"]
     search_fields = ["email"]
