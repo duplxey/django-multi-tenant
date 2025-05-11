@@ -36,6 +36,8 @@ SHARED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "tenant_users.permissions",
+    "tenant_users.tenants",
     "rest_framework",
     "django_filters",
     "tenants.apps.TenantsConfig",
@@ -43,6 +45,9 @@ SHARED_APPS = [
 ]
 
 TENANT_APPS = [
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "tenant_users.permissions",
     "tasks.apps.TasksConfig",
 ]
 
@@ -57,6 +62,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "tenant_users.tenants.middleware.TenantAccessMiddleware",  # must be after 'AuthenticationMiddleware'
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -109,6 +115,11 @@ TENANT_DOMAIN_MODEL = "tenants.Domain"
 BASE_DOMAIN = "localhost"
 PUBLIC_SCHEMA_NAME = "public"
 
+# django-tenant-users
+# https://django-tenant-users.readthedocs.io/en/latest/index.html
+
+TENANT_USERS_DOMAIN = BASE_DOMAIN
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -125,6 +136,10 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
+]
+
+AUTHENTICATION_BACKENDS = [
+    "tenant_users.permissions.backend.UserBackend",
 ]
 
 # Internationalization

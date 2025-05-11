@@ -15,4 +15,4 @@ class DomainAdmin(admin.ModelAdmin):
 
 admin.site.register(Tenant, TenantAdmin)
 admin.site.register(Domain, DomainAdmin)
-admin.site.register(User, UserAdmin)
+admin.site.register(User)
